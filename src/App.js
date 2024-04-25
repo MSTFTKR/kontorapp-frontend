@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import {  Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
@@ -13,7 +13,6 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import SearchIcon from "@mui/icons-material/Search";
 import BasicSelect from "./components/selectBox";
-import rangeAverage from "./components/analysis";
 
 function App() {
   const [colDefs, setColDefs] = useState([
@@ -30,83 +29,135 @@ function App() {
     },
   ]);
 
+  const [yearValue, setYearValue] = useState(new Date().getFullYear());
+  const [monthValue, setMonthValue] = useState(new Date().getMonth() + 1);
+  const [weekValue, setWeekValue] = useState("");
+
   const [data, setData] = useState([]);
-  const [filterData, setFilterData] = useState([]);
+
   const [dateRangeLast, setDateRangeLast] = useState(moment());
   const [dateRangeFirst, setDateRangeFirst] = useState(
     moment().startOf("month")
   );
-  const [dayAverage, setDayAverage] = useState();
-  const [monthAverage, setMonthAverage] = useState();
-  const [yearAverage, setYearAverage] = useState();
 
   useEffect(() => {
-    dataList()
+    dataList(dateRangeFirst, dateRangeLast)
       .then((res) => {
-        const filterDate = res.data.sort(
-          (a, b) => new Date(b.date) - new Date(a.date)
-        );
-        setData(filterDate);
-        setFilterData(filterDate);
+        console.log(res.data);
+        setData(res.data);
       })
       .catch((err) => {
         console.log("Data çekilemedi", err);
       });
+    currentWeek();
+    
   }, []);
 
-  const convertFilterData = async (firstDate, lastDate) => {
-    const dateRange = data.filter((items) => {
-      if (
-        new Date(items.date) >= new Date(firstDate) &&
-        new Date(items.date) <= new Date(lastDate)
-      ) {
-        return items;
-      }
-    });
-
-    setFilterData(dateRange);
-    console.log(filterData);
+  const filterData = () => {
+    dataList(dateRangeFirst, dateRangeLast)
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log("Data çekilemedi", err);
+      });
   };
 
+  const handleYear = (event) => {
+    setYearValue(event.target.value);
+  };
+  const handleMonth = (event) => {
+    setMonthValue(event.target.value);
+  };
+  const handleWeek = (event) => {
+    setWeekValue(event.target.value);
+  };
 
-
+  const currentWeek = () => {
+    const today = moment();
+    const currentMonth = today.month();
+    const startOfMonth = moment().month(currentMonth).startOf("month");
+    let currentWeekOfMonth = today.isoWeek() - startOfMonth.isoWeek() + 1;
+    if(currentWeekOfMonth==5){currentWeekOfMonth=4}
+    setWeekValue(currentWeekOfMonth);
+  };
   return (
     <Grid container sx={{ flexDirection: "column" }}>
+      <button
+        onClick={() => rangeAverage(filterData, dateRangeFirst, dateRangeLast)}
+      >
+        YILLIK
+      </button>
+
       <Grid sx={{ display: "flex", gap: 3, justifyContent: "space-between" }}>
-        <Grid xs={4} sx={{ display: "flex", marginBottom: "30px", flexDirection:"column", alignItems:"center" ,textAlign:"center"}}>
-          <BasicSelect title="YILLIK VERİLER" label="YIL" menuItems="year" />
-          <Typography>
-            Aylık Ortalama Kullanım:
-          </Typography>
-          <Typography>
-            Haftalık Ortalama Kullanım:
-          </Typography>
-          <Typography>
-            Günlük Ortalama Kullanım:
-          </Typography>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: "flex",
+            marginBottom: "30px",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          <BasicSelect
+            title="YILLIK VERİLER"
+            label="YIL"
+            menuItems="year"
+            value={yearValue}
+            onChange={handleYear}
+          />
+          {yearValue}
+          <Typography>Aylık Ort. Kullanım:</Typography>
+          <Typography>Haftalık Ort Kullanım:</Typography>
+          <Typography>Günlük Ort. Kullanım:</Typography>
         </Grid>
-        <Grid xs={4} sx={{ display: "flex", marginBottom: "30px", flexDirection:"column", alignItems:"center" ,textAlign:"center"}}>
-          <BasicSelect title="AYLIK VERİLER" label="AY" menuItems="month" />
-          <Typography>
-            Haftalık Ortalama Kullanım: 
-          </Typography>
-          <Typography>
-            Günlük Ortalama Kullanım: 
-          </Typography>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: "flex",
+            marginBottom: "30px",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          <BasicSelect
+            title="AYLIK VERİLER"
+            label="AY"
+            menuItems="month"
+            value={monthValue}
+            onChange={handleMonth}
+          />
+          {monthValue}
+          <Typography>Haftalık Ort. Kullanım:</Typography>
+          <Typography>Günlük Ort. Kullanım:</Typography>
         </Grid>
-        <Grid xs={4} sx={{ display: "flex", marginBottom: "30px", flexDirection:"column", alignItems:"center" ,textAlign:"center"}}>
+        <Grid
+          item
+          xs={4}
+          sx={{
+            display: "flex",
+            marginBottom: "30px",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           <BasicSelect
             title="HAFTALIK VERİLER"
             label="HAFTA"
             menuItems="week"
+            value={weekValue}
+            onChange={handleWeek}
           />
-          <Typography>
-            Günlük Ortalama Kullanım: 
-          </Typography>
+          {weekValue}
+          <Typography>Günlük Ort. Kullanım:</Typography>
         </Grid>
       </Grid>
-
-      <button onClick={() => rangeAverage(filterData, dateRangeFirst, dateRangeLast)}>YILLIK</button>
 
       <Grid sx={{ display: "flex", gap: "10px" }}>
         <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="tr">
@@ -127,13 +178,11 @@ function App() {
           />
         </LocalizationProvider>
 
-        <button
-          onClick={() => convertFilterData(dateRangeFirst, dateRangeLast)}
-        >
+        <button onClick={() => filterData(dateRangeFirst, dateRangeLast)}>
           <SearchIcon></SearchIcon>
         </button>
       </Grid>
-{/* 
+      {/* 
       <Grid>
         <div className="ag-theme-quartz" style={{ height: "300px" }}>
           <AgGridReact rowData={data} columnDefs={colDefs} />
@@ -142,7 +191,7 @@ function App() {
 
       <Grid>
         <div className="ag-theme-quartz" style={{ height: "300px" }}>
-          <AgGridReact rowData={filterData} columnDefs={colDefs} />
+          <AgGridReact rowData={data} columnDefs={colDefs} />
         </div>
       </Grid>
     </Grid>

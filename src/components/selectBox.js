@@ -7,27 +7,8 @@ import Select from "@mui/material/Select";
 import { Typography } from "@mui/material";
 
 export default function BasicSelect(props) {
-  const [yearValue, setYearValue] = useState("");
-  const [monthValue, setMonthValue] = useState(new Date().getMonth() + 1);
-  const [weekValue, setWeekValue] = useState("");
-
   const [years, setYears] = useState([]);
-
-  useEffect(() => {
-    generateYears();
-    getCurrentWeekNumber();
-  }, []);
-
-  const handleYear = (event) => {
-    setYearValue(event.target.value);
-  };
-  const handleMonth = (event) => {
-    setMonthValue(event.target.value);
-  };
-  const handleWeek = (event) => {
-    setWeekValue(event.target.value);
-  };
-  const monthNames = [
+  const months = [
     { value: 1, label: "Ocak" },
     { value: 2, label: "Şubat" },
     { value: 3, label: "Mart" },
@@ -47,16 +28,10 @@ export default function BasicSelect(props) {
     { value: 3, label: "3.Hafta" },
     { value: 4, label: "4.Hafta" },
   ];
-
-  function getCurrentWeekNumber() {
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const pastDaysOfMonth = (today - firstDayOfMonth) / 86400000;
-    let currentWeek = Math.ceil(
-      (pastDaysOfMonth + firstDayOfMonth.getDay() + 1) / 7
-    );
-    setWeekValue(currentWeek);
-  }
+ 
+  useEffect(() => {
+    generateYears();
+  }, []);
 
   function generateYears() {
     const currentYear = new Date().getFullYear();
@@ -65,7 +40,6 @@ export default function BasicSelect(props) {
       gnrtYears.push({ value: year, label: year.toString() });
     }
     setYears(gnrtYears);
-    setYearValue(gnrtYears[gnrtYears.length - 1].label);
   }
 
   return (
@@ -74,30 +48,19 @@ export default function BasicSelect(props) {
       <FormControl fullWidth>
         <InputLabel>{props.label}</InputLabel>
         <Select
-          value={
-            props.menuItems === "year"
-              ? yearValue
-              : props.menuItems === "month"
-              ? monthValue
-              : weekValue
-          }
+          value={props.value}
           label={props.label}
           onChange={
-            props.menuItems === "year"
-              ? handleYear
-              : props.menuItems === "month"
-              ? handleMonth
-              : handleWeek
-          }
+            props.onChange}
         >
           {props.menuItems === "year"
-            ? years.map((item) => (
+            ?years.map((item) => (
                 <MenuItem key={item.value} value={item.value}>
                   {item.label}
                 </MenuItem>
               ))
             : props.menuItems === "month"
-            ? monthNames.map((item) => (
+            ? months.map((item) => (
                 <MenuItem key={item.value} value={item.value}>
                   {item.label}
                 </MenuItem>
