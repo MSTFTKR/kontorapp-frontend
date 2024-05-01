@@ -36,7 +36,7 @@ export default function BasicSelect(props) {
   function generateYears() {
     const currentYear = new Date().getFullYear();
     const gnrtYears = [];
-    for (let year = 2020; year <= currentYear; year++) {
+    for (let year = 2022; year <= currentYear; year++) {
       gnrtYears.push({ value: year, label: year.toString() });
     }
     setYears(gnrtYears);
