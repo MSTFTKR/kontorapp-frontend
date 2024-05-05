@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 function Homepage() {
   const navigate = useNavigate();
+  const [tokenFlag,setTokenFlag]=useState(false);
   const [colDefs, setColDefs] = useState([
     { headerName: "Toplam Kontor", field: "alinanKontor" },
     { headerName: "Kullanılan Kontor", field: "kullanilanKontor" },
@@ -53,11 +54,13 @@ function Homepage() {
   );
 
   useEffect(() => {
-    const login= Cookies.get('authToken');
-    if(!login){
-        navigate("/");  
+    const login = Cookies.get("authToken");
+    if (!login) {
+      navigate("/");
+    }else{
+      setTokenFlag(true)
     }
-    dataList(dateRangeFirst, dateRangeLast)
+    dataList(dateRangeFirst, dateRangeLast, login)
       .then((res) => {
         setData(res.data.rangeDatas);
         setRangeAnalysis(res.data.rangesAnalysisData);
@@ -66,7 +69,7 @@ function Homepage() {
         console.log("Data çekilemedi", err);
       });
 
-    yearDataAnalysis(yearValue)
+    yearDataAnalysis(yearValue, login)
       .then((res) => {
         setyearAnalysis(res.data);
         // console.log(res.data.year)
@@ -81,7 +84,13 @@ function Homepage() {
   }, []);
 
   useEffect(() => {
-    yearDataAnalysis(yearValue)
+    const login = Cookies.get("authToken");
+    if (!login) {
+      navigate("/");
+    }else{
+      setTokenFlag(true)
+    }
+    yearDataAnalysis(yearValue, login)
       .then((res) => {
         setyearAnalysis(res.data);
         setmonthAnalysis(res.data.months.monthsData[monthValue]);
@@ -151,7 +160,13 @@ function Homepage() {
   }, [weekValue]);
 
   const rangeDatas = () => {
-    dataList(dateRangeFirst, dateRangeLast)
+    const login = Cookies.get("authToken");
+    if (!login) {
+      navigate("/");
+    }else{
+      setTokenFlag(true)
+    }
+    dataList(dateRangeFirst, dateRangeLast, login)
       .then((res) => {
         setData(res.data.rangeDatas);
         setRangeAnalysis(res.data.rangesAnalysisData);
@@ -182,15 +197,17 @@ function Homepage() {
     setWeekValue(currentWeekOfMonth);
   };
 
-  const logout=()=>{
-    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    document.cookie = 'usertcVkn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    navigate("/")
-  }
+  const logout = () => {
+    document.cookie =
+      "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "usertcVkn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    navigate("/");
+  };
   return (
-    <Grid container sx={{ flexDirection: "column" }}>
+    <Grid container sx={{ flexDirection: "column",display:tokenFlag===true?"flex":"none" }}>
       <Grid sx={{ display: "flex" }}>
-      <TextField
+        <TextField
           id="outlined-read-only-input"
           label="Güncel Durum:"
           defaultValue="Hello World"
@@ -199,7 +216,7 @@ function Homepage() {
           }}
         />
         <Typography>
-        Alınan Kontör:{" "}
+          Alınan Kontör:{" "}
           {yearAnalysis?.year?.yearsData?.yearCurrentReceived
             ? yearAnalysis?.year?.yearsData?.yearCurrentReceived
             : "0"}
@@ -220,7 +237,7 @@ function Homepage() {
         </Typography>
         <Button onClick={logout}>ÇIKIŞ YAP</Button>
       </Grid>
-      <Grid sx={{ display: "flex", gap: 3, justifyContent: "space-between"}}>
+      <Grid sx={{ display: "flex", gap: 3, justifyContent: "space-between" }}>
         <Grid
           item
           xs={4}

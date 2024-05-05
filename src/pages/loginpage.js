@@ -8,10 +8,13 @@ function Loginpage() {
   const [tcVkn, setTcVkn] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const[tokenFlag,setTokenFlag]=useState(false);
   useEffect(()=>{
    const login= Cookies.get('authToken');
     if(login){
         navigate("/anasayfa");  
+    }else{
+        setTokenFlag(true)
     }
   },[])
   const handleLogin = async () => {
@@ -29,9 +32,10 @@ function Loginpage() {
     }
   };
   return (
+    
     <Grid
       container
-      sx={{ justifyContent: "center", alignItems: "center", height: "100vh" }}
+      sx={{ justifyContent: "center", alignItems: "center", height: "100vh",display:tokenFlag===true?"flex":"none" }}
     >
       <Grid item sx={{ backgroundColor: "pink", padding: "3%" }}>
         <Grid
