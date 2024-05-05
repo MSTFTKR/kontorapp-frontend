@@ -8,5 +8,4 @@ export const yearDataAnalysis = async (year,token) => {
       }
     }
   );
- 
 };
