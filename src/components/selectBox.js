@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
+import "../App.css";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -28,7 +29,7 @@ export default function BasicSelect(props) {
     { value: 3, label: "3.Hafta" },
     { value: 4, label: "4.Hafta" },
   ];
- 
+
   useEffect(() => {
     generateYears();
   }, []);
@@ -44,17 +45,19 @@ export default function BasicSelect(props) {
 
   return (
     <Box sx={{ width: "200px" }}>
-      <Typography sx={{ fontWeight: "bold" }}>{props.title}</Typography>
+      <Typography className="TypographyTitle" sx={{fontWeight:"bold"}}>{props.title}</Typography>
       <FormControl fullWidth>
-        <InputLabel>{props.label}</InputLabel>
-        <Select
+        <InputLabel sx={{fontWeight:"bold"}} >{props.label}</InputLabel>
+        <Select 
+          sx={{fontWeight:"bold"}}
+          className="selectbox"
           value={props.value}
           label={props.label}
-          onChange={
-            props.onChange}
+          onChange={props.onChange}
+         
         >
           {props.menuItems === "year"
-            ?years.map((item) => (
+            ? years.map((item) => (
                 <MenuItem key={item.value} value={item.value}>
                   {item.label}
                 </MenuItem>

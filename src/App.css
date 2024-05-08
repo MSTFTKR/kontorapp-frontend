@@ -1,7 +1,35 @@
 .App {
   text-align: center;
 }
-
+body {
+  background-color: #ebebeb;
+}
+.MuiTypography-root {
+  
+}
+.TypographyTitle {
+  color: #000;
+}
+.BasicSelect{
+  display:flex;
+  justify-Content:center;
+}
+.gridBorder {
+  display:grid;
+  padding: 1%;
+  margin:1%;
+  text-align: center;
+  align-items: center;
+  background-color: #e6f8fb;
+  border-radius: 5px 5px 5px 5px;
+  background: linear-gradient(360deg, #fafaf2, #ffffff); 
+  box-shadow: rgba(47, 142, 197, 0.2) 0px 5px 20px 0px;
+ 
+}
+.selectbox {
+  border: 2px solid #03c4ff;
+  background-color: #faf1df;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

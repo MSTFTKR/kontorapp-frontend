@@ -30,13 +30,10 @@ export function LineChart(props) {
   const [lastMonth, setLastMonth] = useState();
   const [lastWeek, setLastWeek] = useState();
   const [lastDay, setLastDay] = useState();
-  const [lastRange, setLastRange] = useState();
-
 
   const [months, setMonths] = useState(["Ocak"]);
   const [weeks, setWeeks] = useState(["1.Hafta"]);
   const [days, setDays] = useState(["1.Gün"]);
-  const [range, setRange] = useState([""]);
 
   const [usageDatas, setUsageDatas] = useState([]);
   const [receivedDatas, setReceivedDatas] = useState([]);
@@ -78,7 +75,7 @@ export function LineChart(props) {
       const monthArray = [...Array(lastMonth ? lastMonth : 1).keys()].map(
         (_, index) => moment().month(index).format("MMMM")
       );
-      monthArray.unshift('')
+      monthArray.unshift("");
       let uDatas = [];
       let rDatas = [];
       let lastUDatas = 0;
@@ -105,15 +102,23 @@ export function LineChart(props) {
       for (let a = 1; a <= lastWeek; a++) {
         week.push(`${a}.Hafta`);
       }
-      week.unshift(0)
+      week.unshift(0);
       let uDatas = [];
       let rDatas = [];
       let lastUDatas = 0;
       let lastRDatas = 0;
       let keys = Object.keys(analysisDatas);
+
       let lastKey = Math.max(...keys);
+
       let firstMonth = lastKey.toString();
-      firstMonth = Number(firstMonth[0] + "0");
+      if (firstMonth.length === 3) {
+        firstMonth = Number(firstMonth[0] + firstMonth[1] + "0");
+      } else {
+        firstMonth = Number(firstMonth[0] + "0");
+      }
+
+      // console.log(firstMonth)
       for (let a = firstMonth; a <= lastKey; a++) {
         if (analysisDatas.hasOwnProperty(a)) {
           uDatas.push(analysisDatas[a].alinanKontor);
@@ -140,13 +145,13 @@ export function LineChart(props) {
       let lastUDatas = 0;
       let lastRDatas = 0;
       uDatas.push(analysisDatas[0]?.alinanKontor);
-            rDatas.push(analysisDatas[0]?.kullanilanKontor);
-            lastUDatas = analysisDatas[0]?.alinanKontor;
-            lastRDatas = analysisDatas[0]?.kullanilanKontor;
+      rDatas.push(analysisDatas[0]?.kullanilanKontor);
+      lastUDatas = analysisDatas[0]?.alinanKontor;
+      lastRDatas = analysisDatas[0]?.kullanilanKontor;
       let lDay = analysisDatas[analysisDatas.length - 1]?.date;
       lDay = moment.utc(lDay).format("DD");
       lDay = Number(lDay);
-  
+
       let firstDay;
       if (lDay < 8) {
         firstDay = 1;
@@ -159,43 +164,64 @@ export function LineChart(props) {
       }
 
       for (let b = firstDay; b <= lDay; b++) {
-    // console.log(b)
-    let found = false; // Her bir gün için verinin bulunup bulunmadığını kontrol etmek için bir bayrak
-    for (let a = 0; a < analysisDatas?.length; a++) {
-        // console.log(a)
-        let dateControl = moment.utc(analysisDatas[a].date).format("DD");
-        dateControl = Number(dateControl);
-        // console.log(dateControl)
-        if (dateControl === b) {
+        // console.log(b)
+        let found = false; // Her bir gün için verinin bulunup bulunmadığını kontrol etmek için bir bayrak
+        for (let a = 0; a < analysisDatas?.length; a++) {
+          // console.log(a)
+          let dateControl = moment.utc(analysisDatas[a].date).format("DD");
+          dateControl = Number(dateControl);
+          // console.log(dateControl)
+          if (dateControl === b) {
             uDatas.push(analysisDatas[a].alinanKontor);
             rDatas.push(analysisDatas[a].kullanilanKontor);
             lastUDatas = analysisDatas[a].alinanKontor;
             lastRDatas = analysisDatas[a].kullanilanKontor;
             found = true; // Veri bulunduğunda bayrağı true yap
             break; // Veri bulunduğunda içteki döngüyü sonlandır
+          }
         }
-    }
-    if (!found) { // Veri bulunmadığında
-        uDatas.push(lastUDatas); // Son bilgileri ekleyin
-        rDatas.push(lastRDatas);
-    }
-}
+        if (!found) {
+          // Veri bulunmadığında
+          uDatas.push(lastUDatas); // Son bilgileri ekleyin
+          rDatas.push(lastRDatas);
+        }
+      }
       setReceivedDatas(rDatas);
       setUsageDatas(uDatas);
       setDays(day);
     }
-    
   }, [lastMonth, lastWeek, lastDay]);
 
   const options = {
+    scales: {
+      x: {
+        ticks: {
+          color: "#000",
+        },
+      },
+      y: {
+        ticks: {
+          color: "#000",
+        },
+      },
+    },
     responsive: true,
     plugins: {
       legend: {
+        display: true,
         position: "top",
+        labels: {
+          color: "#000",
+        },
+        backgroundColor: "white",
       },
       title: {
         display: true,
         text: "YILLIK BAZINDA AY GRAFİĞİ ",
+        color: "#000",
+      },
+      elements: {
+        backgroundColor: "rgba(255, 99, 132, 0.2)", // Grafik alanının arka plan rengi
       },
     },
   };
@@ -213,17 +239,23 @@ export function LineChart(props) {
       {
         label: "Alınan Kontor",
         data: receivedDatas,
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(228, 77, 97)",
+        backgroundColor: "rgb(100, 8, 28)",
       },
       {
         label: "Kullanılan Kontor",
         data: usageDatas,
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        borderColor: "#121933",
+        backgroundColor: "#057cb8",
       },
     ],
   };
 
-  return <Line options={options} data={data} />;
+  return (
+    <div
+      style={{ backgroundColor: "#d6e8f7", padding: "20px" }}
+    >
+      <Line options={options} data={data} />
+    </div>
+  )
 }
