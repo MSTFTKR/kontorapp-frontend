@@ -17,7 +17,6 @@ import { LineChart } from "../components/lineCharts";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
-import axios from "axios";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -247,6 +246,7 @@ function Homepage() {
         }}
       >
         <Typography sx={{ color: "#ffffff" }}>
+          Güncel Durum:
           Alınan Kontör:{" "}
           {yearAnalysis?.year?.yearsData?.yearCurrentReceived
             ? yearAnalysis?.year?.yearsData?.yearCurrentReceived
