@@ -16,6 +16,9 @@ import BasicSelect from "../components/selectBox";
 import { LineChart } from "../components/lineCharts";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+
+import axios from "axios";
+
 function Homepage() {
   const navigate = useNavigate();
   const [tokenFlag, setTokenFlag] = useState(false);
@@ -75,6 +78,14 @@ function Homepage() {
       .then((res) => {
         setyearAnalysis(res.data);
         // console.log(res.data)
+        setmonthAnalysis(res.data.months.monthsData[monthValue]);
+        setMonthChartAnalysis(
+          filterKeysStarting(res.data.months.lastWeekItemsByKey, "month")
+        );
+        setWeekChartAnalysis(
+          filterKeysStarting(res.data.weeks.daysOfWeekDatas, "week")
+        );
+        setweekAnalysis(res.data.weeks.weeksData[`${monthValue}${weekValue}`]);
       })
       .catch((err) => {
         console.log("Data çekilemedi", err);
@@ -96,7 +107,6 @@ function Homepage() {
       yearDataAnalysis(yearValue, login)
         .then((res) => {
           setyearAnalysis(res.data);
-          console.log(res);
           setmonthAnalysis(res.data.months.monthsData[monthValue]);
           setMonthChartAnalysis(
             filterKeysStarting(res.data.months.lastWeekItemsByKey, "month")
@@ -250,7 +260,6 @@ function Homepage() {
             ? yearAnalysis?.year?.yearsData?.yearCurrentRemaining
             : "0"}
         </Typography>
-
         <Button onClick={logout}>ÇIKIŞ YAP</Button>
       </Grid>
       <Grid
@@ -261,8 +270,13 @@ function Homepage() {
           margin: "1%",
         }}
       >
-        <Grid item xs={4} className="gridBorder">
-          <Grid sx={{display:"flex",flexDirection:"column"}}>
+        <Grid item xs={4} className="gridBorder2">
+          <Grid
+            sx={{
+              display: "flex",
+              flexDirection: "column"
+            }}
+          >
             <Typography variant="textColor">
               Toplam Alınan Kontör:
               {yearAnalysis?.year?.yearsData?.yearTotalReceived
@@ -324,15 +338,20 @@ function Homepage() {
             </Typography>
           </Grid>
 
-          <Grid>
-            <LineChart
-              data={yearAnalysis?.year?.lastMonthItemsByKey}
-              category="year"
-            />
-          </Grid>
+          <LineChart
+            data={yearAnalysis?.year?.lastMonthItemsByKey}
+            category="year" title="YILLIK BAZINDA AY GRAFİĞİ"
+          />
         </Grid>
-        <Grid item xs={4} className="gridBorder">
-          <Grid sx={{display:"flex",flexDirection:"column"}}>
+
+        <Grid item xs={4} className="gridBorder2">
+        <Grid
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent:"flex-end"
+            }}
+          >
             <Typography>
               Toplam Alınan Kontör:
               {monthAnalysis?.monthTotalReceived
@@ -382,11 +401,10 @@ function Homepage() {
             </Typography>
           </Grid>
 
-          <Grid xs={12}>
-            <LineChart data={monthChartAnalysis} category="month" />
-          </Grid>
+          <LineChart data={monthChartAnalysis} category="month"   title="AYLIK BAZINDA HAFTALIK GRAFİĞİ"/>
         </Grid>
-        <Grid item xs={4} className="gridBorder">
+
+        <Grid item xs={4} className="gridBorder2">
           <Grid>
             <Typography>
               Toplam Alınan Kontör:
@@ -423,9 +441,7 @@ function Homepage() {
                 : "0"}
             </Typography>
           </Grid>
-          <Grid>
-            <LineChart data={weekChartAnalysis} category="week" />
-          </Grid>
+          <LineChart data={weekChartAnalysis} category="week" title="HAFTALIK BAZINDA GÜN GRAFİĞİ" />
         </Grid>
       </Grid>
 
@@ -458,7 +474,8 @@ function Homepage() {
         xs={12}
         sx={{
           display: "flex",
-          marginTop: "1%",
+          margin: "1%",
+          gap: 2,
         }}
       >
         <Grid xs={8}>
@@ -474,7 +491,7 @@ function Homepage() {
           </div>
         </Grid>
 
-        <Grid item xs={4} className="gridBorder">
+        <Grid item xs={4} className="gridBorder2">
           <Typography>
             Toplam Alınan Kontör:
             {rangeAnalysis?.rangeTotalReceived

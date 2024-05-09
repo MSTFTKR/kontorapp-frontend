@@ -4,9 +4,9 @@
 body {
   background-color: #ebebeb;
 }
-.MuiTypography-root {
+/* .MuiTypography-root {
   
-}
+} */
 .TypographyTitle {
   color: #000;
 }
@@ -14,17 +14,16 @@ body {
   display:flex;
   justify-Content:center;
 }
-.gridBorder {
-  display:grid;
+.gridBorder2 {
   padding: 1%;
-  margin:1%;
+  margin: 1%;
   text-align: center;
-  align-items: center;
+  justify-content: center; 
+  align-items: center; 
   background-color: #e6f8fb;
-  border-radius: 5px 5px 5px 5px;
-  background: linear-gradient(360deg, #fafaf2, #ffffff); 
+  border-radius: 5px;
+  background: linear-gradient(360deg, #f6faf2, #ffffff); 
   box-shadow: rgba(47, 142, 197, 0.2) 0px 5px 20px 0px;
- 
 }
 .selectbox {
   border: 2px solid #03c4ff;
@@ -53,7 +52,7 @@ body {
 }
 
 .App-link {
-  color: #61dafb;
+  color: #f8f2d5;
 }
 
 @keyframes App-logo-spin {

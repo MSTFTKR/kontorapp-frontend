@@ -12,6 +12,7 @@ import {
 import { Line } from "react-chartjs-2";
 import moment from "moment";
 import "moment/locale/tr";
+import { Grid } from "@mui/material";
 
 ChartJS.register(
   CategoryScale,
@@ -217,11 +218,8 @@ export function LineChart(props) {
       },
       title: {
         display: true,
-        text: "YILLIK BAZINDA AY GRAFİĞİ ",
+        text: props.title,
         color: "#000",
-      },
-      elements: {
-        backgroundColor: "rgba(255, 99, 132, 0.2)", // Grafik alanının arka plan rengi
       },
     },
   };
@@ -252,10 +250,8 @@ export function LineChart(props) {
   };
 
   return (
-    <div
-      style={{ backgroundColor: "#d6e8f7", padding: "20px" }}
-    >
+    <Grid style={{backgroundColor: "#f8f2d5"}}>
       <Line options={options} data={data} />
-    </div>
-  )
+    </Grid>
+  );
 }
