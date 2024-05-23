@@ -2,32 +2,46 @@
   text-align: center;
 }
 body {
-  background-color: #ebebeb;
+  background-color: #dad9d9;
 }
 /* .MuiTypography-root {
   
 } */
 .TypographyTitle {
   color: #000;
+  /* background-color: #0354aa; */
 }
 .BasicSelect{
   display:flex;
   justify-Content:center;
 }
 .gridBorder2 {
+  display:grid;
+  align-items: flex-end;
   padding: 1%;
   margin: 1%;
+  gap: 20;
   text-align: center;
-  justify-content: center; 
-  align-items: center; 
-  background-color: #e6f8fb;
   border-radius: 5px;
   background: linear-gradient(360deg, #f6faf2, #ffffff); 
-  box-shadow: rgba(47, 142, 197, 0.2) 0px 5px 20px 0px;
+
 }
+.gridBorder{
+  /* display: flex;
+  flex-direction: column; */
+  box-shadow: rgba(47, 142, 197, 0.2) 0px 5px 20px 0px;
+  border-radius: 5px;
+  text-align:center;
+  padding: 1%;
+  background-color: #ffffff;
+  min-height: auto;
+
+
+}
+
 .selectbox {
-  border: 2px solid #03c4ff;
-  background-color: #faf1df;
+  border: 1px solid #0265d2;
+  background-color: #d3e5f8;
 }
 .App-logo {
   height: 40vmin;

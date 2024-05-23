@@ -68,11 +68,11 @@ function Loginpage() {
           />
           <Button
             sx={{
-              backgroundColor: "#313130",
-              color: "#e6f8fb",
+              backgroundColor: "#0265d2",
+              color: "#cee0f4",
               ":hover": {
-                backgroundColor: "gray",
-                color:"black"
+                backgroundColor: "#0354aa",
+                color:"#cee0f4"
               },
             }}
             onClick={handleLogin}

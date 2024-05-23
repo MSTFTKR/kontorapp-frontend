@@ -45,16 +45,15 @@ export function LineChart(props) {
 
   useEffect(() => {
     if (analysisDatas) {
-      if (props.category == "year") {
+      if (props.category === "year") {
         let keys = Object.keys(analysisDatas);
         keys = Number(keys[keys.length - 1]);
         setLastMonth(keys);
-      } else if (props.category == "month") {
-        var keys = Object.keys(analysisDatas);
+      } else if (props.category === "month") {
+        let keys = Object.keys(analysisDatas);
         var lastKey = Math.max(...keys);
         setLastWeek(lastKey % 10);
-      } else if (props.category == "week") {
-        var keys = Object.keys(analysisDatas);
+      } else if (props.category === "week") {
         let lDay = analysisDatas[analysisDatas.length - 1]?.date;
         lDay = moment.utc(lDay).format("DD");
         lDay = Number(lDay);
@@ -72,7 +71,7 @@ export function LineChart(props) {
   }, [analysisDatas]);
 
   useEffect(() => {
-    if (props.category == "year") {
+    if (props.category === "year") {
       const monthArray = [...Array(lastMonth ? lastMonth : 1).keys()].map(
         (_, index) => moment().month(index).format("MMMM")
       );
@@ -250,7 +249,7 @@ export function LineChart(props) {
   };
 
   return (
-    <Grid style={{backgroundColor: "#f8f2d5"}}>
+    <Grid xs={12} style={{display:"flex", backgroundColor: "#fff1e3", alignItems:"center", justifyContent:"center", width:"auto", height:"auto" }}>
       <Line options={options} data={data} />
     </Grid>
   );

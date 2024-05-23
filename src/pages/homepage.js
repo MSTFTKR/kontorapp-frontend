@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import { Button, Grid, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  FormControl,
+  Grid,
+  MenuItem,
+  Pagination,
+  Select,
+  Typography,
+} from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { dataList } from "../api/data/dataList";
+import { pageList } from "../api/data/dataList";
 import { yearDataAnalysis } from "../api/data/yearAnalysis";
 import moment from "moment";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -15,19 +25,24 @@ import SearchIcon from "@mui/icons-material/Search";
 import BasicSelect from "../components/selectBox";
 import { LineChart } from "../components/lineCharts";
 import { useNavigate } from "react-router-dom";
+
 import Cookies from "js-cookie";
 
-
 function Homepage() {
+  const [totalData, setTotalData] = useState(0);
+  const [selectedPage, setSelectedPage] = useState(1);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
   const navigate = useNavigate();
   const [tokenFlag, setTokenFlag] = useState(false);
   const [colDefs, setColDefs] = useState([
-    { headerName: "Toplam Kontor", field: "alinanKontor" },
-    { headerName: "Kullanılan Kontor", field: "kullanilanKontor" },
-    { headerName: "Kalan Kontor", field: "kalanKontor" },
+    { headerName: "Toplam Kontor", field: "alinanKontor", width: 150 },
+    { headerName: "Kullanılan Kontor", field: "kullanilanKontor", width: 150 },
+    { headerName: "Kalan Kontor", field: "kalanKontor", width: 150 },
     {
       headerName: "Tarih",
       field: "date",
+      width: 150,
       valueFormatter: (params) => {
         return moment.utc(params.value).format("DD.MM.YYYY:HH:mm");
       },
@@ -66,8 +81,17 @@ function Homepage() {
     }
     dataList(dateRangeFirst, dateRangeLast, login)
       .then((res) => {
-        setData(res.data.rangeDatas);
         setRangeAnalysis(res.data.rangesAnalysisData);
+        setTotalData(res.data.totalData);
+        setPage(Math.ceil(res.data.totalData / pageSize));
+      })
+      .catch((err) => {
+        console.log("Data çekilemedi", err);
+      });
+
+    pageList(dateRangeFirst, dateRangeLast, login, selectedPage, pageSize)
+      .then((res) => {
+        setData(res.data);
       })
       .catch((err) => {
         console.log("Data çekilemedi", err);
@@ -140,13 +164,13 @@ function Homepage() {
       return result;
     } else if (params === "week") {
       let result = {};
-      for (var key in data) {
+      for (let key in data) {
         if (key.toString().startsWith(monthValue)) {
           result[key] = data[key];
         }
       }
       let result2 = [];
-      for (var key in result) {
+      for (let key in result) {
         if (key.toString().endsWith(weekValue)) {
           result2.push(result[key]);
         }
@@ -180,17 +204,47 @@ function Homepage() {
     );
   }, [weekValue]);
 
-  const rangeDatas = () => {
+  useEffect(() => {
     const login = Cookies.get("authToken");
     if (!login) {
       navigate("/");
     } else {
       setTokenFlag(true);
     }
+    pageList(dateRangeFirst, dateRangeLast, login, selectedPage, pageSize)
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log("Data çekilemedi", err);
+      });
+  }, [pageSize, selectedPage]);
+
+  const rangeDatas = async () => {
+    const login = Cookies.get("authToken");
+    if (!login) {
+      navigate("/");
+    } else {
+      setTokenFlag(true);
+    }
+    setSelectedPage(1);
+    setPageSize(25);
+
     dataList(dateRangeFirst, dateRangeLast, login)
       .then((res) => {
-        setData(res.data.rangeDatas);
         setRangeAnalysis(res.data.rangesAnalysisData);
+        setTotalData(res.data.totalData);
+        setPage(Math.ceil(res.data.totalData / pageSize));
+      })
+      .catch((err) => {
+        console.log("Data çekilemedi", err);
+      });
+
+    pageList(dateRangeFirst, dateRangeLast, login, selectedPage, pageSize)
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data);
       })
       .catch((err) => {
         console.log("Data çekilemedi", err);
@@ -213,7 +267,8 @@ function Homepage() {
     const currentMonth = today.month();
     const startOfMonth = moment().month(currentMonth).startOf("month");
     let currentWeekOfMonth = today.isoWeek() - startOfMonth.isoWeek() + 1;
-    if (currentWeekOfMonth == 5) {
+
+    if (currentWeekOfMonth === 5) {
       currentWeekOfMonth = 4;
     }
     setWeekValue(currentWeekOfMonth);
@@ -226,7 +281,9 @@ function Homepage() {
       "usertcVkn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     navigate("/");
   };
-
+  const handleChange = (event, value) => {
+    setSelectedPage(value);
+  };
   return (
     <Grid
       container
@@ -242,12 +299,11 @@ function Homepage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          backgroundColor: "#211bbb",
+          backgroundColor: "#0265d2",
         }}
       >
         <Typography sx={{ color: "#ffffff" }}>
-          Güncel Durum:
-          Alınan Kontör:{" "}
+          Güncel Durum: Alınan Kontör:{" "}
           {yearAnalysis?.year?.yearsData?.yearCurrentReceived
             ? yearAnalysis?.year?.yearsData?.yearCurrentReceived
             : "0"}{" "}
@@ -266,15 +322,17 @@ function Homepage() {
         sx={{
           display: "flex",
           gap: 3,
-          justifyContent: "space-between",
+          justifyContent: "space-around",
           margin: "1%",
         }}
       >
-        <Grid item xs={4} className="gridBorder2">
+        <Grid item xs={3.5} className="gridBorder2">
           <Grid
+            item
+            xs={12}
             sx={{
               display: "flex",
-              flexDirection: "column"
+              flexDirection: "column",
             }}
           >
             <Typography variant="textColor">
@@ -340,18 +398,13 @@ function Homepage() {
 
           <LineChart
             data={yearAnalysis?.year?.lastMonthItemsByKey}
-            category="year" title="YILLIK BAZINDA AY GRAFİĞİ"
+            category="year"
+            title="YILLIK BAZINDA AY GRAFİĞİ"
           />
         </Grid>
 
-        <Grid item xs={4} className="gridBorder2">
-        <Grid
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent:"flex-end"
-            }}
-          >
+        <Grid item xs={3.5} className="gridBorder2">
+          <Grid xs={12}>
             <Typography>
               Toplam Alınan Kontör:
               {monthAnalysis?.monthTotalReceived
@@ -401,11 +454,15 @@ function Homepage() {
             </Typography>
           </Grid>
 
-          <LineChart data={monthChartAnalysis} category="month"   title="AYLIK BAZINDA HAFTALIK GRAFİĞİ"/>
+          <LineChart
+            data={monthChartAnalysis}
+            category="month"
+            title="AYLIK BAZINDA HAFTALIK GRAFİĞİ"
+          />
         </Grid>
 
-        <Grid item xs={4} className="gridBorder2">
-          <Grid>
+        <Grid item xs={3.5} className="gridBorder2">
+          <Grid xs={12}>
             <Typography>
               Toplam Alınan Kontör:
               {weekAnalysis?.weekTotalReceived
@@ -441,11 +498,15 @@ function Homepage() {
                 : "0"}
             </Typography>
           </Grid>
-          <LineChart data={weekChartAnalysis} category="week" title="HAFTALIK BAZINDA GÜN GRAFİĞİ" />
+          <LineChart
+            data={weekChartAnalysis}
+            category="week"
+            title="HAFTALIK BAZINDA GÜN GRAFİĞİ"
+          />
         </Grid>
       </Grid>
 
-      <Grid sx={{ display: "flex", gap: "10px" }}>
+      <Grid sx={{ display: "flex", gap: "10px", margin: "1%" }}>
         <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="tr">
           <DemoContainer components={["DatePicker"]}></DemoContainer>
           <DatePicker
@@ -469,19 +530,20 @@ function Homepage() {
         </button>
       </Grid>
 
-      <Grid
-        item
-        xs={12}
+      <Grid container
         sx={{
-          display: "flex",
           margin: "1%",
-          gap: 2,
+          justifyContent:"space-between"
         }}
       >
-        <Grid xs={8}>
+        <Grid item xs={7.5}>
           <div
             className="ag-theme-quartz"
-            style={{ height: "100%", width: "100%" }}
+            style={{
+              minHeight:'150%',
+              height: "100%",
+              width: "100%",
+            }}
           >
             <AgGridReact
               rowData={data}
@@ -489,9 +551,74 @@ function Homepage() {
               overlayNoRowsTemplate="<span style='padding: 10px; display: block; text-align: center;'>Bu aralığa ait hiç veri yok</span>"
             />
           </div>
+          <Grid
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              backgroundColor: "#ffffff",
+              borderRadius: "5px",
+            }}
+          >
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                textAlign: "center",
+                justifyContent: "space-between",
+                p: 1,
+              }}
+            >
+              Toplam {totalData} kayıt bulundu.{" "}
+              {(selectedPage - 1) * pageSize + 1}-
+              {totalData < selectedPage * pageSize
+                ? totalData
+                : selectedPage * pageSize}{" "}
+              arası kayıtlar gösteriliyor.
+              <Pagination
+                count={page}
+                page={selectedPage}
+                onChange={(event, value) => setSelectedPage(value)}
+                showFirstButton
+                showLastButton
+              />
+            </Grid>
+            <Grid
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                paddingRight: "1%",
+                paddingLeft: "1%",
+              }}
+            >
+              Sayfada
+              <FormControl sx={{ marginLeft: 1, marginRight: 1 }}>
+                <Select
+                  value={pageSize}
+                  defaultValue={pageSize}
+                  onChange={(e) => {
+                    setPageSize(e.target.value);
+                  }}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                >
+                  <MenuItem value={25}>25</MenuItem>
+                  <MenuItem value={50}>50</MenuItem>
+                  <MenuItem value={100}>100</MenuItem>
+                </Select>
+              </FormControl>
+              Kayıt Göster
+            </Grid>
+          </Grid>
+          
         </Grid>
-
-        <Grid item xs={4} className="gridBorder2">
+        <Grid
+          item
+          xs={4}
+          className="gridBorder"
+          
+        >
           <Typography>
             Toplam Alınan Kontör:
             {rangeAnalysis?.rangeTotalReceived
