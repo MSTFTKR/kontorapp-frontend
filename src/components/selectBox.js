@@ -45,7 +45,7 @@ export default function BasicSelect(props) {
 
   return (
     <Box sx={{ width: "200px" }}>
-      <Typography className="TypographyTitle" sx={{fontWeight:"bold"}}>{props.title}</Typography>
+      <Typography className="TypographyTitle" sx={{fontWeight:"bold", color:"#002a3f"}}>{props.title}</Typography>
       <FormControl fullWidth>
         <InputLabel sx={{fontWeight:"bold"}} >{props.label}</InputLabel>
         <Select 

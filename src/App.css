@@ -2,14 +2,14 @@
   text-align: center;
 }
 body {
-  background-color: #dad9d9;
+  background-color: #D7E3E5 ;
 }
 /* .MuiTypography-root {
   
 } */
 .TypographyTitle {
-  color: #000;
-  /* background-color: #0354aa; */
+  color: #4B5154 ;
+  /* background-color: #041820; */
 }
 .BasicSelect{
   display:flex;
@@ -23,7 +23,9 @@ body {
   gap: 20;
   text-align: center;
   border-radius: 5px;
-  background: linear-gradient(360deg, #f6faf2, #ffffff); 
+  background: linear-gradient(360deg, #f0f5f7, #ffffff); 
+  box-shadow: rgba(126, 126, 126, 0.2) 0px 5px 20px 0px;
+
 
 }
 .gridBorder{
@@ -34,14 +36,12 @@ body {
   text-align:center;
   padding: 1%;
   background-color: #ffffff;
-  min-height: auto;
-
 
 }
 
 .selectbox {
-  border: 1px solid #0265d2;
-  background-color: #d3e5f8;
+  border: 1px solid #2E4D58;
+  background-color: #e1e9eb;
 }
 .App-logo {
   height: 40vmin;

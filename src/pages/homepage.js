@@ -25,6 +25,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import BasicSelect from "../components/selectBox";
 import { LineChart } from "../components/lineCharts";
 import { useNavigate } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import Cookies from "js-cookie";
 
@@ -281,9 +282,7 @@ function Homepage() {
       "usertcVkn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     navigate("/");
   };
-  const handleChange = (event, value) => {
-    setSelectedPage(value);
-  };
+
   return (
     <Grid
       container
@@ -299,10 +298,10 @@ function Homepage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          backgroundColor: "#0265d2",
+          backgroundColor: "#2E4D58",
         }}
       >
-        <Typography sx={{ color: "#ffffff" }}>
+        <Typography sx={{ color: "#D7E3E5", paddingLeft:"1%"}}>
           Güncel Durum: Alınan Kontör:{" "}
           {yearAnalysis?.year?.yearsData?.yearCurrentReceived
             ? yearAnalysis?.year?.yearsData?.yearCurrentReceived
@@ -316,7 +315,8 @@ function Homepage() {
             ? yearAnalysis?.year?.yearsData?.yearCurrentRemaining
             : "0"}
         </Typography>
-        <Button onClick={logout}>ÇIKIŞ YAP</Button>
+        
+        <Button style={{color:"#D7E3E5"}} onClick={logout}><LogoutIcon/></Button>
       </Grid>
       <Grid
         sx={{

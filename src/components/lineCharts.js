@@ -196,13 +196,18 @@ export function LineChart(props) {
     scales: {
       x: {
         ticks: {
-          color: "#000",
+          color: "#ffffff",
         },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.3)' // X ekseni için ızgara çizgilerinin rengi
+        }
       },
       y: {
         ticks: {
-          color: "#000",
-        },
+          color: "#ffffff",
+        },grid: {
+          color: 'rgba(255, 255, 255, 0.3)' // X ekseni için ızgara çizgilerinin rengi
+        }
       },
     },
     responsive: true,
@@ -211,14 +216,14 @@ export function LineChart(props) {
         display: true,
         position: "top",
         labels: {
-          color: "#000",
+          color: "#ffffff",
         },
         backgroundColor: "white",
       },
       title: {
         display: true,
         text: props.title,
-        color: "#000",
+        color: "#ffffff",
       },
     },
   };
@@ -236,20 +241,20 @@ export function LineChart(props) {
       {
         label: "Alınan Kontor",
         data: receivedDatas,
-        borderColor: "rgb(228, 77, 97)",
-        backgroundColor: "rgb(100, 8, 28)",
+        borderColor: "#ff0011",
+        backgroundColor: "#fffaf2",
       },
       {
         label: "Kullanılan Kontor",
         data: usageDatas,
-        borderColor: "#121933",
-        backgroundColor: "#057cb8",
+        borderColor: "#08beff",
+        backgroundColor: "#d8fdf4",
       },
     ],
   };
 
   return (
-    <Grid xs={12} style={{display:"flex", backgroundColor: "#fff1e3", alignItems:"center", justifyContent:"center", width:"auto", height:"auto" }}>
+    <Grid xs={12} style={{display:"flex", borderRadius:"5px", backgroundColor: "#2E4053", alignItems:"center", justifyContent:"center", width:"auto", height:"auto" }}>
       <Line options={options} data={data} />
     </Grid>
   );

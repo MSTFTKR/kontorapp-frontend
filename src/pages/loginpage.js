@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import "../App.css";
 
 function Loginpage() {
+
+  const [logins, setLogins] = useState(true);
   const [tcVkn, setTcVkn] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -24,7 +26,8 @@ function Loginpage() {
         return res.data;
       })
       .catch((err) => {
-        console.log("Data çekilemedi", err);
+        setLogins(false)
+        console.log("Geçersiz Giriş", err);
       });
     if (datas) {
       Cookies.set("authToken", datas.token, { expires: 1 / 24 });
@@ -52,6 +55,7 @@ function Loginpage() {
           }}
         >
           <TextField
+          
             label="TC NO-VKN GİRİNİZ"
             onChange={(e) => {
               setTcVkn(e.target.value);
@@ -59,6 +63,7 @@ function Loginpage() {
           ></TextField>
 
           <TextField
+
             label="ŞİFRE GİRİNİZ"
             type="password"
             autoComplete="current-password"
@@ -66,18 +71,20 @@ function Loginpage() {
               setPassword(e.target.value);
             }}
           />
+          
+          {logins===false?<span style={{color:"red"}}>Giriş Başarısız. Lütfen Bilgilerinizi Doğru Giriniz</span>:''}
           <Button
             sx={{
-              backgroundColor: "#0265d2",
-              color: "#cee0f4",
+              backgroundColor: "#2E4D58",
+              color: "#D7E3E5",
               ":hover": {
-                backgroundColor: "#0354aa",
-                color:"#cee0f4"
+                backgroundColor: "#9bb1b9",
+                color:"#041820"
               },
             }}
             onClick={handleLogin}
-          >
-            Giriş Yap
+          > 
+            <b>Giriş Yap</b>
           </Button>
         </Grid>
       </Grid>
